@@ -21,11 +21,15 @@ signupRouter.post(
   validateRequest,
   async (request: Request, response: Response) => {
     const { email, password } = request.body;
+
     await User.deleteMany({});
 
     const hashedPassword = await Password.toHash('password');
 
-    const savedUser = await build({ email, password: hashedPassword });
+    const userObject = new User({ email, password: hashedPassword });
+
+    const savedUser = await userObject.save()
+
 
     const jwtToken = jwt.sign(
       {
